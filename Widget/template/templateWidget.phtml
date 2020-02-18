@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <?php
+    /** @var \StudentUtility\Repository\Meta\StudentRecordBook $recordBook */
+    $recordBook = $data['recordBook'];
+    /** @var \StudentUtility\Repository\Meta\RecordBook\AcademicYear $year */
+    $year = current($recordBook->getAcademicYear());
+    ?>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="app">
+    <table>
+        <caption>Номер года <?php echo $year->getPeriod() ?></caption>
+        <tr>
+            <th>Дисциплина</th>
+            <th>Тип</th>
+            <th>Часов</th>
+            <th>Результат</th>
+            <th>Дата</th>
+            <th>Преподователь</th>
+        </tr>
+
+        <?php
+        $year->getPeriod();
+        /** @var \StudentUtility\Repository\Meta\RecordBook\Semester $semester */
+        $semester = current($year->getSemesterList());
+        foreach ($semester->getDisciplineList() as $subject) {
+            ?>
+
+            <tr>
+                <td><?php echo $subject->getName() ?></td>
+                <td><?php echo $subject->getTypeExam() ?></td>
+                <td><?php echo $subject->getHoursPerYear() ?></td>
+                <td><?php echo $subject->getRating() ?></td>
+                <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
+                <td><?php echo $subject->getTeacher() ?></td>
+            </tr>
+
+            <?php
+
+        }
+        ?>
+    </table>
+</div>
+</body>
+</html>
+
