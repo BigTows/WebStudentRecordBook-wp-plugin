@@ -12,11 +12,15 @@ License: MIT
 namespace WebStudentRecordBook;
 
 use StudentUtility\API;
+use WebStudentRecordBook\Menu\AdminMenu;
 use WebStudentRecordBook\Widget\WebStudentRecordBookWidget;
 
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 if (is_plugin_active('StudentUtility-wp-plugin/index.php')) {
+    require 'Api/RestController.php';
     require 'Widget/WebStudentRecordBookWidget.php';
+    require 'Menu/AdminMenu.php';
     new WebStudentRecordBookWidget(API::getApiInstance());
+    new AdminMenu();
 }
