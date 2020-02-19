@@ -15,6 +15,14 @@
             }
         }).done(function (response) {
 
+
+            var div = document.createElement("div");
+            div.id = "response";
+            div.innerText = JSON.stringify(response);
+            document.body.innerText ="";
+            document.body.append(div);
+
+
             // Will return your UID.
             console.log(response);
         });
