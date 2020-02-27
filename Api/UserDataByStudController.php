@@ -31,28 +31,32 @@ class UserDataByStudController extends WP_REST_Controller
 
     public function get_items($data)
     {
-//        $datas = [
-//            'uid' => get_current_user_id(),
-//            'a'   => $_GET['stud']
-//        ];
-
-        $datas = [];
-
-        $stud = $_GET['stud'];
-//        $this->studentMetaRepository->getStudentByStudentId($stud);
-        $user_id = 1;
-        $user_id = null;
-
-        if ( !current_user_can('administrator') && $user_id == null) {
-            $datas["status"] = 1;
-        } else {
-            $datas["uid"] = get_current_user_id();
-            $datas["firstName"] = wp_get_current_user()->first_name;
-            $datas["secondName"] = wp_get_current_user()->last_name;
-            $datas["status"] = 0;
+        $studentId = $_GET['studentId'];
+        if (!is_numeric($studentId)) {
+            $responseData["code"] = 1;
+            return $this->createResponse($responseData);
         }
+        $studentMeta = $this->studentMetaRepository->getStudentByStudentId( (int) $studentId );
+        if ($studentMeta === null) {
+            $responseData["code"] = 1;
+            return $this->createResponse($responseData);
+        }
+        $student = get_user_by('id', $studentMeta->getUserId());
+        if (current_user_can('administrator') === false || $studentMeta === null || $student === false) {
+            $responseData["code"] = 1;
+        } else {
+            $responseData["uid"] = $studentMeta->getUserId();
+            $responseData["firstName"] = $student->first_name;
+            $responseData["secondName"] = $student->last_name;
+            $responseData["recordBook"] = $studentMeta->getStudentRecordBook() === null ? [] : $studentMeta->getStudentRecordBook()->serialize();
+            $responseData["code"] = 0;
+        }
+        return $this->createResponse($responseData);
+    }
 
-        $response = new WP_REST_Response($datas, 200);
+    private function createResponse($data)
+    {
+        $response = new WP_REST_Response($data, 200);
         // Set headers.
         $response->set_headers(['Cache-Control' => 'must-revalidate, no-cache, no-store, private']);
         return $response;
