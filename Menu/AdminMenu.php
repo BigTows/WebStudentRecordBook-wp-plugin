@@ -54,11 +54,33 @@ class AdminMenu
     {
         ?>
         <div class="wrap">
-            <h2><?php echo get_admin_page_title()."sd";var_dump(wp_enqueue_script('my-plugin213123123123')); ?></h2>
+            <h2><?php echo get_admin_page_title(); ?></h2>
+
+            <script>
+                (function ($) {
+
+                    $(document).ready(function () {
+                        var _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
+                        $.ajax({
+                            type: 'GET',
+                            url: '/wp-json/my-plugin/v1/uid/',
+                            data: {
+                                // bid : next
+                            },
+                            dataType: 'json',
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                            }
+                        }).done(function (response) {
+                            console.log(response);
+                        });
+                    });
+
+                })(jQuery);
+            </script>
 
             <form action="options.php" method="POST">
                 <?php
-                wp_enqueue_script('my-plugin');
                 settings_fields('option_group');     // скрытые защитные поля
                 do_settings_sections('primer_page'); // секции с настройками (опциями). У нас она всего одна 'section_id'
                 submit_button();

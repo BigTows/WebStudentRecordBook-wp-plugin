@@ -12,19 +12,7 @@ class RestController extends WP_REST_Controller
 {
     public function __construct()
     {
-        add_action('wp_enqueue_scripts', [$this, 'scripts']);
         add_action('rest_api_init', [$this, 'rest']);
-    }
-
-
-    function scripts()
-    {
-        // Add JS.
-        wp_enqueue_script('my-plugin', plugin_dir_url(__FILE__) . '../js/scripts.js', ['jquery'], NULL, TRUE);
-        // Pass nonce to JS.
-        wp_localize_script('my-plugin', 'MyPluginSettings', [
-            'nonce' => wp_create_nonce('wp_rest'),
-        ]);
     }
 
     public function rest()
@@ -42,7 +30,7 @@ class RestController extends WP_REST_Controller
         // Get current user ID.
         $datas = [
             'uid' => get_current_user_id(),
-            'a'=>$_GET['data']
+            'a'=>wp_get_current_user()->display_name
         ];
 
         $response = new WP_REST_Response($datas, 200);
