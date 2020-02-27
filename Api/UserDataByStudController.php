@@ -33,28 +33,28 @@ class UserDataByStudController extends WP_REST_Controller
     {
         $studentId = $_GET['studentId'];
         if (!is_numeric($studentId)) {
-            $responseData["code"] = 1;
+            $responseData['code'] = 1;
             return $this->createResponse($responseData);
         }
-        $studentMeta = $this->studentMetaRepository->getStudentByStudentId( (int) $studentId );
+        $studentMeta = $this->studentMetaRepository->getStudentByStudentId((int)$studentId);
         if ($studentMeta === null) {
-            $responseData["code"] = 1;
+            $responseData['code'] = 1;
             return $this->createResponse($responseData);
         }
         $student = get_user_by('id', $studentMeta->getUserId());
-        if (current_user_can('administrator') === false || $studentMeta === null || $student === false) {
-            $responseData["code"] = 1;
+        if ($student === false || current_user_can('administrator') === false) {
+            $responseData['code'] = 1;
         } else {
-            $responseData["uid"] = $studentMeta->getUserId();
-            $responseData["firstName"] = $student->first_name;
-            $responseData["secondName"] = $student->last_name;
-            $responseData["recordBook"] = $studentMeta->getStudentRecordBook() === null ? [] : $studentMeta->getStudentRecordBook()->serialize();
-            $responseData["code"] = 0;
+            $responseData['uid'] = $studentMeta->getUserId();
+            $responseData['firstName'] = $student->first_name;
+            $responseData['secondName'] = $student->last_name;
+            $responseData['recordBook'] = $studentMeta->getStudentRecordBook() === null ? [] : $studentMeta->getStudentRecordBook()->serialize();
+            $responseData['code'] = 0;
         }
         return $this->createResponse($responseData);
     }
 
-    private function createResponse($data)
+    private function createResponse($data): WP_REST_Response
     {
         $response = new WP_REST_Response($data, 200);
         // Set headers.
