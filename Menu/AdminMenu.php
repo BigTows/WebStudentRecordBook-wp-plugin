@@ -52,41 +52,8 @@ class AdminMenu
 
     public function render()
     {
-        ?>
-        <div class="wrap">
-            <h2><?php echo get_admin_page_title(); ?></h2>
 
-            <script>
-                (function ($) {
+        require 'template/adminMenuTemplate.php';
 
-                    $(document).ready(function () {
-                        var _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
-                        $.ajax({
-                            type: 'GET',
-                            url: '/wp-json/my-plugin/v1/uid/',
-                            data: {
-                                'stud': 3456789123
-                            },
-                            dataType: 'json',
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader('X-WP-Nonce', _nonce);
-                            }
-                        }).done(function (response) {
-                            console.log(response);
-                        });
-                    });
-
-                })(jQuery);
-            </script>
-
-            <form action="options.php" method="POST">
-                <?php
-                settings_fields('option_group');     // скрытые защитные поля
-                do_settings_sections('primer_page'); // секции с настройками (опциями). У нас она всего одна 'section_id'
-                submit_button();
-                ?>
-            </form>
-        </div>
-        <?php
     }
 }
