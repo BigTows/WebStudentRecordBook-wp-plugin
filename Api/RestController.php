@@ -30,7 +30,7 @@ class RestController extends WP_REST_Controller
         // Get current user ID.
         $datas = [
             'uid' => get_current_user_id(),
-            'a'=>wp_get_current_user()->user_email
+            'a'   => $_GET['stud']
         ];
 
         $response = new WP_REST_Response($datas, 200);

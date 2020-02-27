@@ -64,6 +64,9 @@ class AdminMenu
                         $.ajax({
                             type: 'GET',
                             url: '/wp-json/my-plugin/v1/uid/',
+                            data: {
+                                'stud': 3456789123
+                            },
                             dataType: 'json',
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader('X-WP-Nonce', _nonce);
