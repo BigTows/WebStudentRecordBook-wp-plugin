@@ -39,20 +39,29 @@
 
                             <?php
                             $academicYear->getPeriod();
-                            foreach ($semester->getDisciplineList() as $subject) {
+
+                            if (count($semester->getDisciplineList()) === 0) {
                                 ?>
-
                                 <tr>
-                                    <td><?php echo $subject->getName() ?></td>
-                                    <td><?php echo $subject->getTypeExam() ?></td>
-                                    <td><?php echo $subject->getHoursPerYear() ?></td>
-                                    <td><?php echo $subject->getRating() ?></td>
-                                    <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
-                                    <td><?php echo $subject->getTeacher() ?></td>
+                                    <td colspan="6" style="text-align: center">Пока нет данных :(</td>
                                 </tr>
-
                                 <?php
+                            } else {
 
+                                foreach ($semester->getDisciplineList() as $subject) {
+                                    ?>
+
+                                    <tr>
+                                        <td><?php echo $subject->getName() ?></td>
+                                        <td><?php echo $subject->getTypeExam() ?></td>
+                                        <td><?php echo $subject->getHoursPerYear() ?></td>
+                                        <td><?php echo $subject->getRating() ?></td>
+                                        <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
+                                        <td><?php echo $subject->getTeacher() ?></td>
+                                    </tr>
+
+                                    <?php
+                                }
                             }
                             ?>
                         </table>
