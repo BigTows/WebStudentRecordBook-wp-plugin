@@ -24,8 +24,8 @@
 
                 foreach ($academicYear->getSemesterList() as $semester) {
                     ?>
-                    <div class='swiper-slide'>
-                        <table>
+                    <div class='swiper-slide mobileTable'>
+                        <table class="gradetable" cellspacing="0" cellpadding="1" border="1">
                             <caption>Номер года <?php echo $academicYear->getPeriod() ?>
                                 Семестр <?php echo $semester->getNumber() ?></caption>
                             <tr>
@@ -85,6 +85,9 @@
             el: '.swiper-pagination',
             clickable: true
         },
+        keyboard: {
+            enabled: true
+        },
         /* navigation: {
              nextEl: '.swiper-button-next',
              prevEl: '.swiper-button-prev',
@@ -96,7 +99,92 @@
         },
     });
 </script>
-<style>
+<style type="text/css">
+    /* Стили для табицы */
+    .gradetable {
+        font-size:12px;
+        font-family: 'Ubuntu Condensed', sans-serif;
+        /*color:#9d999d;*/
+        color: #333333;
+        width:100%;
+        border-width: 1px;
+        border-color: #729ea5;
+        border-collapse: collapse;
+    }
+    .gradetable th {
+        font-size:12px;
+        background:#ff8833;    /*d7ecef*/
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #729ea5;
+    }
+    .gradetable caption {
+        font-size:12px;
+        background:#ff8833;    /*d7ecef*/
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #729ea5;
+    }
+    .gradetable tr {background:#ffffff;}
+    .gradetable td {
+        font-size:12px;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #729ea5;
+    }
+    .mobileTable {
+        overflow:auto;
+        width:100%
+    }
+
+    .widget WebStudentRecordBook\Widget\WebStudentRecordBookWidget amr_widget {
+        overflow:auto;
+        width:100%
+    }
+
+    .gradetable td:nth-of-type(1){text-align:left}.gradetable th,.gradetable td{text-align:center}
+    .gradetable tr:hover {background:#ffc499;}
+
+
+
+    /*!* Стили для меню *!*/
+    /*.menu-main {*/
+    /*    list-style: none;*/
+    /*    margin: 40px 0 5px;*/
+    /*    padding: 25px 0 5px;*/
+    /*    text-align: center;*/
+    /*    background: #f0f8ff;*/
+    /*}*/
+    /*.menu-main li {display: inline-block;}*/
+    /*.menu-main li:after {*/
+    /*    content: "|";*/
+    /*    color: #606060;*/
+    /*    display: inline-block;*/
+    /*    vertical-align:top;*/
+    /*}*/
+    /*.menu-main li:last-child:after {content: none; }*/
+    /*.menu-main a {*/
+    /*    text-decoration: none;*/
+    /*    font-family: 'Ubuntu Condensed', sans-serif;*/
+
+    /*    letter-spacing: 2px;*/
+    /*    position: relative;*/
+    /*    padding-bottom: 20px;*/
+    /*    margin: 0 34px 0 30px;*/
+    /*    font-size: 17px;*/
+    /*    text-transform: uppercase;*/
+    /*    display: inline-block;*/
+    /*    transition: color .2s;*/
+    /*}*/
+    /*.menu-main a, .menu-main a:visited {color: #333333;}*/
+    /*.menu-main a.current, .menu-main a:hover{color: #ff8833;}*/
+
+    body {background:#f0f8ff;}
+
+
 </style>
 </body>
 </html>
