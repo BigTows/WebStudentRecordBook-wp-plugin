@@ -6,7 +6,7 @@
 <!--Script for initialize appendGrid-->
 <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
 <script>
-    let self = this;
+    var mySwiper = undefined;
     let datas = {};
     const columns = [
         {
@@ -94,10 +94,9 @@
                 }
 
                 let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
-                //let studentId = $("input").first().val();
                 $.ajax({
                     type: 'GET',
-                    url: '/wp-json/my-plugin/v1/save/',
+                    url: '/wp-json/WebStudentRecordBook/save/',
                     data: {
                         'studentId': lastData.studentId,
                         'recordBook': lastData.recordBook
@@ -110,11 +109,66 @@
                     console.log(response);
                 });
             });
+            $("#createNewEducationYearButton").click(function () {
+                var data = parseInt(prompt('Учебный год'));
+                var recordBook = lastData.recordBook;
+                recordBook.academicYearList[recordBook.academicYearList.length] = {
+                    period: data + "/" + (data + 1),
+                    semesterList: [
+                        {
+                            number: 1,
+                            disciplineList: []
+                        },
+                        {
+                            number: 2,
+                            disciplineList: []
+                        }
+                    ]
+                };
+
+                function compare(a, b) {
+                    if (a.period < b.period) {
+                        return -1;
+                    }
+                    if (a.period > b.period) {
+                        return 1;
+                    }
+                    return 0;
+                }
+
+                recordBook.academicYearList.sort(compare);
+                init(lastData);
+            });
+
+            $("#createDeleteEducationYearButton").click(function () {
+                let data = prompt('Удал Учебный год');
+                var recordBook = lastData.recordBook;
+
+                for (let key in recordBook.academicYearList) {
+                    let academicYear = recordBook.academicYearList[key];
+                    if (academicYear.period === data) {
+                        recordBook.academicYearList.splice(key, 1);
+                        break;
+                    }
+                }
+                function compare(a, b) {
+                    if (a.period < b.period) {
+                        return -1;
+                    }
+                    if (a.period > b.period) {
+                        return 1;
+                    }
+                    return 0;
+                }
+
+                recordBook.academicYearList.sort(compare);
+                init(lastData);
+            });
 
 
             function init(data) {
                 lastData = data;
-                document.getElementById("student-name").innerText = "ФИО студента: " + data.firstName + " " + data.secondName;
+                initDataAboutStudent(data);
 
                 console.log(data);
                 var recordBook = data.recordBook;
@@ -144,8 +198,12 @@
                                         buttonGroup: "btn-group-sm"
                                     }
                                 });
-                                datas[year.period][semester.number].load(semester.disciplineList);
-
+                                if (semester.disciplineList.length === 0) {
+                                    datas[year.period][semester.number].load([{}]);
+                                    datas[year.period][semester.number].removeRow();
+                                } else {
+                                    datas[year.period][semester.number].load(semester.disciplineList);
+                                }
 
                             }, 200);
                         })(jQuery);
@@ -153,18 +211,34 @@
 
                     }
                 }
+                initSwiper();
+            }
 
-                var mySwiper = new Swiper('.swiper-container', {
-                    // Optional parameters
-                    // direction: 'vertical',
+            function template(nameSemester, idTable) {
+                return "<div class='swiper-slide'>" +
+                    "<div class='name-semester'>" + nameSemester + " </div>" +
+                    " <table id='" + idTable + "'></table>" +
+                    "</div>"
+            }
+
+            function initDataAboutStudent(data) {
+                let studentBlockInfo = document.getElementById('studentInfoBlock');
+                studentBlockInfo.style.visibility = 'visible';
+                document.getElementById('studentFirstName').innerText = 'Имя: ' + data.firstName;
+                document.getElementById('studentLastName').innerText = 'Фамилия: ' + data.secondName;
+            }
+
+            function initSwiper() {
+                if (mySwiper !== undefined) {
+                    mySwiper.update();
+                    return;
+                }
+                mySwiper = new Swiper('.swiper-container', {
                     loop: false,
                     allowTouchMove: false,
-                    // If we need pagination
-                    pagination: {
+                    /*pagination: {
                         el: '.swiper-pagination',
-                    },
-
-                    // Navigation arrows
+                    },*/
                     navigation: {
                         nextEl: '.swiper-button-next',
                         prevEl: '.swiper-button-prev',
@@ -174,15 +248,9 @@
                     scrollbar: {
                         el: '.swiper-scrollbar',
                     },
-                })
+                });
             }
 
-            function template(nameSemester, idTable) {
-                return "<div class='swiper-slide'>" +
-                    "<div class='name-semester'>" + nameSemester + " </div>" +
-                    " <table id='" + idTable + "'></table>" +
-                    "</div>"
-            }
         });
     })(jQuery);
 

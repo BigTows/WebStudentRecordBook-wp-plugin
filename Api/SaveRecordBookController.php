@@ -4,6 +4,7 @@
 namespace WebStudentRecordBook\Api;
 
 
+use RuntimeException;
 use StudentUtility\Repository\Meta\StudentRecordBook;
 use StudentUtility\Repository\StudentMetaRepositoryInterface;
 use WP_REST_Controller;
@@ -14,16 +15,26 @@ class SaveRecordBookController extends WP_REST_Controller
 {
     private $studentMetaRepository;
 
+    /**
+     * SaveRecordBookController constructor.
+     *
+     * @param StudentMetaRepositoryInterface $studentMetaRepository
+     *
+     * @uses initRestRoute
+     */
     public function __construct(StudentMetaRepositoryInterface $studentMetaRepository)
     {
         $this->studentMetaRepository = $studentMetaRepository;
-        add_action('rest_api_init', [$this, 'rest']);
+        add_action('rest_api_init', [$this, 'initRestRoute']);
     }
 
-    public function rest()
+    /**
+     * Initialize rest route
+     */
+    public function initRestRoute(): void
     {
         // Register route.
-        register_rest_route('my-plugin/v1', '/save', [
+        register_rest_route('WebStudentRecordBook', '/save', [
             'methods'  => WP_REST_Server::READABLE,
             'callback' => [$this, 'get_items'],
         ]);
@@ -32,11 +43,16 @@ class SaveRecordBookController extends WP_REST_Controller
 
     public function get_items($data)
     {
+        $studentId = (int)$_GET['studentId'];
         try {
-            $data = StudentRecordBook::unserialize(json_encode(['academicYearList' => current($_GET['recordBook'])]));
-            if ($data instanceof StudentRecordBook) {
+            $student = $this->studentMetaRepository->getStudentByStudentId($studentId);
+            if ($student === null) {
+                throw new RuntimeException("Student with student ID {$studentId} not found");
+            }
+            $studentRecordBook = StudentRecordBook::unserialize(json_encode(['academicYearList' => current($_GET['recordBook'])], JSON_THROW_ON_ERROR, 512));
+            if ($studentRecordBook instanceof StudentRecordBook) {
                 $student = $this->studentMetaRepository->getStudentByStudentId((int)$_GET['studentId']);
-                $this->studentMetaRepository->save($student->setStudentRecordBook($data));
+                $this->studentMetaRepository->save($student->setStudentRecordBook($studentRecordBook));
             }
             return $this->createResponse(['Code' => 0, 'Message' => ''], 200);
         } catch (\Throwable $e) {
