@@ -53,7 +53,7 @@ class AdminMenu
     public function render()
     {
 
-        require 'template/adminMenuTemplate.php';
+        require 'template/adminMenuTemplate.phtml';
 
     }
 }

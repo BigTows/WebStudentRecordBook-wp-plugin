@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
+    <?php include 'scriptJs.phtml' ?>
+</head>
+<body>
+<div class="wrap">
+    <h2><?php echo get_admin_page_title(); ?></h2>
+
+    <form action="" id="findStudent">
+        <label>
+            <input type="text" placeholder="Введите номер студенческого билета">
+        </label>
+        <input type="submit" value="Найти" class="button button-primary">
+    </form>
+    <button class="button button-success" id="saveButton">Сохранить</button>
+    <br>
+    <div class="student-data">
+        <div id="student-name"></div>
+    </div>
+    <div class="swiper-container">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper" id="swiper-container-slider">
+         <!--
+            <div class="swiper-slide">Slide 1
+
+                <table id="tblAppendGrid"></table>
+            </div>
+            <div class="swiper-slide">Slide 2</div>
+            <div class="swiper-slide">Slide 3</div>-->
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- If we need navigation buttons -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+
+        <!-- If we need scrollbar -->
+        <div class="swiper-scrollbar"></div>
+    </div>
+    <style>
+        .swiper-slide{
+            margin-top: 30px;
+            height: auto;
+        }
+        .name-semester{
+            margin-left: 45%;
+        }
+        .swiper-button-prev{
+           top: 25px;
+        }
+        .swiper-button-next{
+            top: 25px;
+        }
+    </style>
+</div>
+</body>
+</html>

@@ -48,6 +48,7 @@ class UserDataByStudController extends WP_REST_Controller
             $responseData['uid'] = $studentMeta->getUserId();
             $responseData['firstName'] = $student->first_name;
             $responseData['secondName'] = $student->last_name;
+            $responseData['studentId'] = (int)$studentId;
             $responseData['recordBook'] = $studentMeta->getStudentRecordBook() === null ? [] : json_decode($studentMeta->getStudentRecordBook()->serialize(), true, 512, JSON_THROW_ON_ERROR);
             $responseData['code'] = 0;
         }

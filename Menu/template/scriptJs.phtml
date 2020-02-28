@@ -1,0 +1,190 @@
+<!--jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--appendGrid JS library-->
+<script src="https://cdn.jsdelivr.net/npm/jquery.appendgrid@2.0.2/dist/AppendGrid.js"></script>
+<!--Script for initialize appendGrid-->
+<script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
+<script>
+    let self = this;
+    let datas = {};
+    const columns = [
+        {
+            name: "name",
+            display: "Дисциплина"
+        },
+        {
+            name: "type",
+            display: "Тип",
+            type: "select",
+            ctrlOptions: [
+                "Зачет с оценкой",
+                "Зачет",
+                "Экзамен",
+            ]
+        },
+        {
+            name: "hoursPerYear",
+            display: "Часов",
+            type: "number",
+            ctrlAttr: {
+                min: 2,
+                max: 10000
+            }
+        },
+        {
+            name: "rating",
+            display: "Результат",
+            type: "select",
+            ctrlOptions: [
+                "",
+                "Зачет",
+                "Удовлетворительно",
+                "Хорошо",
+                "Отлично",
+            ]
+        },
+        {
+            name: "resultDate",
+            display: "Дата сдачи",
+            type: "date",
+            ctrlAttr: {
+                maxlength: 10
+            }
+        },
+        {
+            name: "teacher",
+            display: "Преподаватель"
+        }
+    ];
+
+    var lastData = null;
+</script>
+
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            $("#findStudent").submit(function (event) {
+                event.preventDefault();
+                let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
+                let studentId = $("input").first().val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/wp-json/my-plugin/v1/uid/',
+                    data: {
+                        'studentId': studentId
+                    },
+                    dataType: 'json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                    }
+                }).done(function (response) {
+                    init(response);
+                });
+            });
+            $("#saveButton").click(function () {
+                console.log(JSON.stringify(lastData));
+                var recordBook = lastData.recordBook;
+                for (let key in recordBook.academicYearList) {
+                    let year = recordBook.academicYearList[key];
+                    for (var keySemester in year.semesterList) {
+                        let semester = year.semesterList[keySemester];
+                        semester.disciplineList = datas[year.period][semester.number].getAllValue();
+                    }
+                }
+
+                let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
+                //let studentId = $("input").first().val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/wp-json/my-plugin/v1/save/',
+                    data: {
+                        'studentId': lastData.studentId,
+                        'recordBook': lastData.recordBook
+                    },
+                    dataType: 'text',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                    }
+                }).done(function (response) {
+                    console.log(response);
+                });
+            });
+
+
+            function init(data) {
+                lastData = data;
+                document.getElementById("student-name").innerText = "ФИО студента: " + data.firstName + " " + data.secondName;
+
+                console.log(data);
+                var recordBook = data.recordBook;
+                let swiperContainer = document.getElementById("swiper-container-slider");
+                swiperContainer.innerHTML = "";
+                for (let key in recordBook.academicYearList) {
+                    let year = recordBook.academicYearList[key];
+                    for (var keySemester in year.semesterList) {
+                        let semester = year.semesterList[keySemester];
+                        let idTable = year.period + semester.number;
+                        swiperContainer.innerHTML += template(year.period + " (" + semester.number + ")", idTable);
+
+                        (function ($) {
+                            setTimeout(function () {
+                                if (datas[year.period] === undefined) {
+                                    datas[year.period] = {};
+                                }
+                                datas[year.period][semester.number] = new AppendGrid({
+                                    element: idTable,
+                                    uiFramework: "bootstrap4",
+                                    iconFramework: "fontawesome5",
+                                    columns: columns,
+                                    // Optional CSS classes, to make table slimmer!
+                                    sectionClasses: {
+                                        table: "table-sm",
+                                        control: "form-control-sm",
+                                        buttonGroup: "btn-group-sm"
+                                    }
+                                });
+                                datas[year.period][semester.number].load(semester.disciplineList);
+
+
+                            }, 200);
+                        })(jQuery);
+
+
+                    }
+                }
+
+                var mySwiper = new Swiper('.swiper-container', {
+                    // Optional parameters
+                    // direction: 'vertical',
+                    loop: false,
+                    allowTouchMove: false,
+                    // If we need pagination
+                    pagination: {
+                        el: '.swiper-pagination',
+                    },
+
+                    // Navigation arrows
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+
+                    // And if we need scrollbar
+                    scrollbar: {
+                        el: '.swiper-scrollbar',
+                    },
+                })
+            }
+
+            function template(nameSemester, idTable) {
+                return "<div class='swiper-slide'>" +
+                    "<div class='name-semester'>" + nameSemester + " </div>" +
+                    " <table id='" + idTable + "'></table>" +
+                    "</div>"
+            }
+        });
+    })(jQuery);
+
+</script>
+

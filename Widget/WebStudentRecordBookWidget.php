@@ -64,27 +64,6 @@ final class WebStudentRecordBookWidget extends WP_Widget
     {
         echo $args['before_widget'] . $args['before_title'] . $args['after_title'];
         $studentMeta = $this->apiStudentUtility->getRepository()->getByUserId(get_current_user_id());
-        $studentMeta->setStudentRecordBook(new StudentRecordBook([
-            new AcademicYear('2019/2020', [
-                new Semester(1, [
-                    (new Discipline('Kazach', 'Экзамен', 200))
-                        ->setTeacher('Азаркин')
-                        ->setRating(2)
-                        ->setResultDate(new DateTime())
-                    ,
-                    new Discipline('Математика', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                ]),
-                new Semester(2, [
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                ])
-            ])
-        ]));
-        $this->apiStudentUtility->getRepository()->save($studentMeta);
         $data = [
             'numberOfStudentCard' => $studentMeta->getNumberOfStudentCard(),
             'recordBook'          => $studentMeta->getStudentRecordBook()
