@@ -4,50 +4,91 @@
     <?php
     /** @var \StudentUtility\Repository\Meta\StudentRecordBook $recordBook */
     $recordBook = $data['recordBook'];
-    /** @var \StudentUtility\Repository\Meta\RecordBook\AcademicYear $year */
-    $year = current($recordBook->getAcademicYear());
     ?>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
 </head>
 <body>
 <div id="app">
-    <table>
-        <caption>Номер года <?php echo $year->getPeriod() ?></caption>
-        <tr>
-            <th>Дисциплина</th>
-            <th>Тип</th>
-            <th>Часов</th>
-            <th>Результат</th>
-            <th>Дата</th>
-            <th>Преподователь</th>
-        </tr>
+    <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
 
-        <?php
-        $year->getPeriod();
-        /** @var \StudentUtility\Repository\Meta\RecordBook\Semester $semester */
-        $semester = current($year->getSemesterList());
-        foreach ($semester->getDisciplineList() as $subject) {
-            ?>
 
-            <tr>
-                <td><?php echo $subject->getName() ?></td>
-                <td><?php echo $subject->getTypeExam() ?></td>
-                <td><?php echo $subject->getHoursPerYear() ?></td>
-                <td><?php echo $subject->getRating() ?></td>
-                <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
-                <td><?php echo $subject->getTeacher() ?></td>
-            </tr>
+    <div class="swiper-container col-10">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper" id="swiper-container-slider">
+            <?php foreach ($recordBook->getAcademicYear() as $academicYear) {
 
-            <?php
+                foreach ($academicYear->getSemesterList() as $semester) {
+                    ?>
+                    <div class='swiper-slide'>
+                        <table>
+                            <caption>Номер года <?php echo $academicYear->getPeriod() ?>
+                                Семестр <?php echo $semester->getNumber() ?></caption>
+                            <tr>
+                                <th>Дисциплина</th>
+                                <th>Тип</th>
+                                <th>Часов</th>
+                                <th>Результат</th>
+                                <th>Дата</th>
+                                <th>Преподователь</th>
+                            </tr>
 
-        }
-        ?>
-    </table>
+                            <?php
+                            $academicYear->getPeriod();
+                            foreach ($semester->getDisciplineList() as $subject) {
+                                ?>
+
+                                <tr>
+                                    <td><?php echo $subject->getName() ?></td>
+                                    <td><?php echo $subject->getTypeExam() ?></td>
+                                    <td><?php echo $subject->getHoursPerYear() ?></td>
+                                    <td><?php echo $subject->getRating() ?></td>
+                                    <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
+                                    <td><?php echo $subject->getTeacher() ?></td>
+                                </tr>
+
+                                <?php
+
+                            }
+                            ?>
+                        </table>
+                    </div>
+                    <?php
+                }
+            } ?>
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- If we need scrollbar -->
+        <div class="swiper-scrollbar"></div>
+    </div>
 </div>
+<script>
+    mySwiper = new Swiper('.swiper-container', {
+        loop: false,
+        allowTouchMove: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+        },
+        /* navigation: {
+             nextEl: '.swiper-button-next',
+             prevEl: '.swiper-button-prev',
+         },*/
+
+        // And if we need scrollbar
+        scrollbar: {
+            el: '.swiper-scrollbar',
+        },
+    });
+</script>
+<style>
+</style>
 </body>
 </html>
 
