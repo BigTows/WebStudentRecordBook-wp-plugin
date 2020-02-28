@@ -180,10 +180,10 @@
                 swiperContainer.innerHTML = "";
                 for (let key in recordBook.academicYearList) {
                     let year = recordBook.academicYearList[key];
-                    for (var keySemester in year.semesterList) {
+                    for (let keySemester in year.semesterList) {
                         let semester = year.semesterList[keySemester];
                         let idTable = year.period + semester.number;
-                        swiperContainer.innerHTML += template(year.period + " (" + semester.number + ")", idTable);
+                        swiperContainer.innerHTML += generateTemplateSlide(year.period + " (" + semester.number + ")", idTable);
 
                         (function ($) {
                             setTimeout(function () {
@@ -221,7 +221,7 @@
                 initSwiper();
             }
 
-            function template(nameSemester, idTable) {
+            function generateTemplateSlide(nameSemester, idTable) {
                 return "<div class='swiper-slide'>" +
                     "<div class='name-semester'>" + nameSemester + " </div>" +
                     " <table id='" + idTable + "'></table>" +
