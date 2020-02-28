@@ -110,8 +110,11 @@
                 });
             });
             $("#createNewEducationYearButton").click(function () {
-                var data = parseInt(prompt('Учебный год'));
+                var data = parseInt(prompt('Введите начальный учебный год (2020)'));
                 var recordBook = lastData.recordBook;
+                if (recordBook.academicYearList === undefined) {
+                    recordBook.academicYearList = [];
+                }
                 recordBook.academicYearList[recordBook.academicYearList.length] = {
                     period: data + "/" + (data + 1),
                     semesterList: [
@@ -141,8 +144,8 @@
             });
 
             $("#createDeleteEducationYearButton").click(function () {
-                let data = prompt('Удал Учебный год');
-                var recordBook = lastData.recordBook;
+                let data = prompt('Введите учебный год, для удаления (2020/2021)');
+                let recordBook = lastData.recordBook;
 
                 for (let key in recordBook.academicYearList) {
                     let academicYear = recordBook.academicYearList[key];
@@ -151,6 +154,7 @@
                         break;
                     }
                 }
+
                 function compare(a, b) {
                     if (a.period < b.period) {
                         return -1;
