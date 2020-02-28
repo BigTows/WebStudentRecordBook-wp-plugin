@@ -83,7 +83,8 @@
         allowTouchMove: true,
         pagination: {
             el: '.swiper-pagination',
-            clickable: true
+            clickable: true,
+            dynamicBullets: true
         },
         keyboard: {
             enabled: true
@@ -100,54 +101,77 @@
     });
 </script>
 <style type="text/css">
+    .swiper-slide {
+        height: auto;
+    }
+
+    .swiper-pagination {
+        margin-top: 30px;
+    }
+
     /* Стили для табицы */
     .gradetable {
-        font-size:12px;
+        font-size: 12px;
         font-family: 'Ubuntu Condensed', sans-serif;
         /*color:#9d999d;*/
         color: #333333;
-        width:100%;
+        width: 100%;
         border-width: 1px;
         border-color: #729ea5;
         border-collapse: collapse;
     }
+
     .gradetable th {
-        font-size:12px;
-        background:#ff8833;    /*d7ecef*/
+        font-size: 12px;
+        background: #ff8833; /*d7ecef*/
         border-width: 1px;
         padding: 8px;
         border-style: solid;
         border-color: #729ea5;
     }
+
     .gradetable caption {
-        font-size:12px;
-        background:#ff8833;    /*d7ecef*/
+        font-size: 12px;
+        background: #ff8833; /*d7ecef*/
         border-width: 1px;
         padding: 8px;
         border-style: solid;
         border-color: #729ea5;
     }
-    .gradetable tr {background:#ffffff;}
+
+    .gradetable tr {
+        background: #ffffff;
+    }
+
     .gradetable td {
-        font-size:12px;
+        font-size: 12px;
         border-width: 1px;
         padding: 8px;
         border-style: solid;
         border-color: #729ea5;
     }
+
     .mobileTable {
-        overflow:auto;
-        width:100%
+        overflow: auto;
+        width: 100%
     }
 
     .widget WebStudentRecordBook\Widget\WebStudentRecordBookWidget amr_widget {
-        overflow:auto;
-        width:100%
+        overflow: auto;
+        width: 100%
     }
 
-    .gradetable td:nth-of-type(1){text-align:left}.gradetable th,.gradetable td{text-align:center}
-    .gradetable tr:hover {background:#ffc499;}
+    .gradetable td:nth-of-type(1) {
+        text-align: left
+    }
 
+    .gradetable th, .gradetable td {
+        text-align: center
+    }
+
+    .gradetable tr:hover {
+        background: #ffc499;
+    }
 
 
     /*!* Стили для меню *!*/
@@ -182,7 +206,9 @@
     /*.menu-main a, .menu-main a:visited {color: #333333;}*/
     /*.menu-main a.current, .menu-main a:hover{color: #ff8833;}*/
 
-    body {background:#f0f8ff;}
+    body {
+        background: #f0f8ff;
+    }
 
 
 </style>
