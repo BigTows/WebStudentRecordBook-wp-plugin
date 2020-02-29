@@ -56,7 +56,7 @@ class SaveRecordBookController extends WP_REST_Controller
             }
             return $this->createResponse(['Code' => 0, 'Message' => ''], 200);
         } catch (\Throwable $e) {
-            return $this->createResponse(['Code' => 2, 'Message' => $e->getMessage()], 500);
+            return $this->createResponse(['Code' => 2, 'Message' => $e->getMessage()], 200);
         }
     }
 

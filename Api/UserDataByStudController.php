@@ -22,7 +22,7 @@ class UserDataByStudController extends WP_REST_Controller
     public function rest()
     {
         // Register route.
-        register_rest_route('my-plugin/v1', '/uid', [
+        register_rest_route('WebStudentRecordBook', '/getStudentDataByStudentId', [
             'methods'  => WP_REST_Server::READABLE,
             'callback' => [$this, 'get_items'],
         ]);

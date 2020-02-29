@@ -5,8 +5,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery.appendgrid@2.0.2/dist/AppendGrid.js"></script>
 <!--Script for initialize appendGrid-->
 <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
 <script>
-    var mySwiper = undefined;
+    let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
+    let mySwiper = undefined;
     let datas = {};
     const columns = [
         {
@@ -66,11 +68,10 @@
         $(document).ready(function () {
             $("#findStudent").submit(function (event) {
                 event.preventDefault();
-                let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
                 let studentId = $("input").first().val();
                 $.ajax({
                     type: 'GET',
-                    url: '/wp-json/my-plugin/v1/uid/',
+                    url: '/wp-json/WebStudentRecordBook/getStudentDataByStudentId/',
                     data: {
                         'studentId': studentId
                     },
@@ -83,17 +84,14 @@
                 });
             });
             $("#saveButton").click(function () {
-                console.log(JSON.stringify(lastData));
-                var recordBook = lastData.recordBook;
+                let recordBook = lastData.recordBook;
                 for (let key in recordBook.academicYearList) {
                     let year = recordBook.academicYearList[key];
-                    for (var keySemester in year.semesterList) {
+                    for (let keySemester in year.semesterList) {
                         let semester = year.semesterList[keySemester];
                         semester.disciplineList = datas[year.period][semester.number].getAllValue();
                     }
                 }
-
-                let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
                 $.ajax({
                     type: 'GET',
                     url: '/wp-json/WebStudentRecordBook/save/',
@@ -101,12 +99,22 @@
                         'studentId': lastData.studentId,
                         'recordBook': lastData.recordBook
                     },
-                    dataType: 'text',
+                    dataType: 'json',
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader('X-WP-Nonce', _nonce);
                     }
                 }).done(function (response) {
                     console.log(response);
+                    if (response.Code === 0) {
+                        $.notify(`Сохранено успешно!`, {
+                            globalPosition: 'bottom right',
+                            className: 'success'
+                        });
+                    } else {
+                        $.notify(`Ошибка сохранения: ${response.Message}`, {
+                            globalPosition: 'bottom right'
+                        });
+                    }
                 });
             });
             $("#createNewEducationYearButton").click(function () {
@@ -171,10 +179,8 @@
 
 
             function init(data) {
-                lastData = data;
+                updateDataCache(data);
                 initDataAboutStudent(data);
-
-                console.log(data);
                 var recordBook = data.recordBook;
                 let swiperContainer = document.getElementById("swiper-container-slider");
                 swiperContainer.innerHTML = "";
@@ -221,11 +227,24 @@
                 initSwiper();
             }
 
+            function updateDataCache(data) {
+                lastData = data;
+                let controlBlock = document.getElementById('controlBlock');
+                if (lastData !== null && lastData !== undefined) {
+                    controlBlock.style.visibility = 'visible';
+                } else {
+                    controlBlock.style.visibility = 'hidden';
+                }
+            }
+
+            /**
+             * Generate template for slide
+             * @param {string} nameSemester name of Semester (Title)
+             * @param {string} idTable id for table
+             * @returns {string}
+             */
             function generateTemplateSlide(nameSemester, idTable) {
-                return "<div class='swiper-slide'>" +
-                    "<div class='name-semester'>" + nameSemester + " </div>" +
-                    " <table id='" + idTable + "'></table>" +
-                    "</div>"
+                return `<div class='swiper-slide'><div class='name-semester'>${nameSemester}</div> <table id='${idTable}'></table></div>`
             }
 
             function initDataAboutStudent(data) {
@@ -243,15 +262,10 @@
                 mySwiper = new Swiper('.swiper-container', {
                     loop: false,
                     allowTouchMove: false,
-                    /*pagination: {
-                        el: '.swiper-pagination',
-                    },*/
                     navigation: {
                         nextEl: '.swiper-button-next',
                         prevEl: '.swiper-button-prev',
                     },
-
-                    // And if we need scrollbar
                     scrollbar: {
                         el: '.swiper-scrollbar',
                     },
