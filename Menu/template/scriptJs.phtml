@@ -80,7 +80,13 @@
                         xhr.setRequestHeader('X-WP-Nonce', _nonce);
                     }
                 }).done(function (response) {
-                    init(response);
+                    if (response.Code === 0) {
+                        init(response);
+                    }else{
+                        $.notify(`${response.Message}`, {
+                            globalPosition: 'bottom right'
+                        });
+                    }
                 });
             });
             $("#saveButton").click(function () {
@@ -119,6 +125,9 @@
             });
             $("#createNewEducationYearButton").click(function () {
                 var data = parseInt(prompt('Введите начальный учебный год (2020)'));
+                if (isNaN(data)) {
+                    return;
+                }
                 var recordBook = lastData.recordBook;
                 if (recordBook.academicYearList === undefined) {
                     recordBook.academicYearList = [];
@@ -196,7 +205,6 @@
                                     uiFramework: "bootstrap4",
                                     iconFramework: "fontawesome5",
                                     columns: columns,
-                                    // Optional CSS classes, to make table slimmer!
                                     sectionClasses: {
                                         table: "table-sm",
                                         control: "form-control-sm",

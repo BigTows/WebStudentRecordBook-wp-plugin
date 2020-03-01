@@ -33,24 +33,25 @@ class UserDataByStudController extends WP_REST_Controller
     {
         $studentId = $_GET['studentId'];
         if (!is_numeric($studentId)) {
-            $responseData['code'] = 1;
+            $responseData['Code'] = 1;
             return $this->createResponse($responseData);
         }
         $studentMeta = $this->studentMetaRepository->getStudentByStudentId((int)$studentId);
         if ($studentMeta === null) {
-            $responseData['code'] = 1;
+            $responseData['Code'] = 1;
+            $responseData['Message'] = "Student with StudentID: {$studentId}, not found.";
             return $this->createResponse($responseData);
         }
         $student = get_user_by('id', $studentMeta->getUserId());
         if ($student === false || current_user_can('administrator') === false) {
-            $responseData['code'] = 1;
+            $responseData['Code'] = 1;
         } else {
             $responseData['uid'] = $studentMeta->getUserId();
             $responseData['firstName'] = $student->first_name;
             $responseData['secondName'] = $student->last_name;
             $responseData['studentId'] = (int)$studentId;
             $responseData['recordBook'] = $studentMeta->getStudentRecordBook() === null ? [] : json_decode($studentMeta->getStudentRecordBook()->serialize(), true, 512, JSON_THROW_ON_ERROR);
-            $responseData['code'] = 0;
+            $responseData['Code'] = 0;
         }
         return $this->createResponse($responseData);
     }
