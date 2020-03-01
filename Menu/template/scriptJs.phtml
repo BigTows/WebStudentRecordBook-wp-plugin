@@ -82,7 +82,7 @@
                 }).done(function (response) {
                     if (response.Code === 0) {
                         init(response);
-                    }else{
+                    } else {
                         $.notify(`${response.Message}`, {
                             globalPosition: 'bottom right'
                         });
@@ -132,8 +132,16 @@
                 if (recordBook.academicYearList === undefined) {
                     recordBook.academicYearList = [];
                 }
+
+                let period = data + "/" + (data + 1);
+
+                if (existsAcademicYear(recordBook.academicYearList, period)) {
+                    alert('Такой учебный год уже существует!');
+                    return;
+                }
+
                 recordBook.academicYearList[recordBook.academicYearList.length] = {
-                    period: data + "/" + (data + 1),
+                    period: period,
                     semesterList: [
                         {
                             number: 1,
@@ -157,6 +165,16 @@
                 });
                 init(lastData);
             });
+
+            function existsAcademicYear(list, find) {
+                for (let key in list) {
+                    let academicYear = list[key];
+                    if (academicYear.period === find) {
+                        return true;
+                    }
+                }
+                return false;
+            }
 
             $("#createDeleteEducationYearButton").click(function () {
                 let data = prompt('Введите учебный год, для удаления (2020/2021)');
@@ -193,7 +211,7 @@
                     for (let keySemester in year.semesterList) {
                         let semester = year.semesterList[keySemester];
                         let idTable = year.period + semester.number;
-                        swiperContainer.innerHTML += generateTemplateSlide(year.period + " (" + semester.number + ")", idTable);
+                        swiperContainer.innerHTML += generateTemplateSlide(year.period, semester.number, idTable);
 
                         (function ($) {
                             setTimeout(function () {
@@ -242,12 +260,13 @@
 
             /**
              * Generate template for slide
-             * @param {string} nameSemester name of Semester (Title)
+             * @param {string} period
+             * @param {int} semesterNumber
              * @param {string} idTable id for table
              * @returns {string}
              */
-            function generateTemplateSlide(nameSemester, idTable) {
-                return `<div class='swiper-slide'><div class='name-semester'>${nameSemester}</div> <table id='${idTable}'></table></div>`
+            function generateTemplateSlide(period, semesterNumber, idTable) {
+                return `<div class='swiper-slide'><div class='name-semester'>${period} Семестр: ${semesterNumber}</div> <table id='${idTable}'></table></div>`
             }
 
             function initDataAboutStudent(data) {

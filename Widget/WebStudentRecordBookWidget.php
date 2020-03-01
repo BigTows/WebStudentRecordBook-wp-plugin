@@ -7,6 +7,11 @@ namespace WebStudentRecordBook\Widget;
 use StudentUtility\API as APIStudentUtility;
 use WP_Widget;
 
+/**
+ * Widget of Student record book
+ *
+ * @package WebStudentRecordBook\Widget
+ */
 final class WebStudentRecordBookWidget extends WP_Widget
 {
     /**
@@ -32,20 +37,17 @@ final class WebStudentRecordBookWidget extends WP_Widget
         $this->apiStudentUtility = $apiStudentUtility;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function form($instance)
     {
-        $title = @ $instance['title'] ?: 'Заголовок по умолчанию';
-
-        ?>
-        <p>
-            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
-                   name="<?php echo $this->get_field_name('title'); ?>" type="text"
-                   value="<?php echo esc_attr($title); ?>">
-        </p>
-        <?php
+        include 'template/settingsWidget.phtml';
     }
 
+    /**
+     * Register widget into WordPress
+     */
     public function registerWidget(): void
     {
         register_widget($this);

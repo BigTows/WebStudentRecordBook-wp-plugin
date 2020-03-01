@@ -14,7 +14,7 @@ namespace WebStudentRecordBook;
 use StudentUtility\API;
 use WebStudentRecordBook\Api\SaveRecordBookController;
 use WebStudentRecordBook\Api\UserDataByStudController;
-use WebStudentRecordBook\Menu\AdminMenu;
+use WebStudentRecordBook\Menu\WebStudentRecordBookAdminMenu;
 use WebStudentRecordBook\Widget\WebStudentRecordBookWidget;
 
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
@@ -23,9 +23,9 @@ if (is_plugin_active('StudentUtility-wp-plugin/index.php')) {
     require 'Api/UserDataByStudController.php';
     require 'Api/SaveRecordBookController.php';
     require 'Widget/WebStudentRecordBookWidget.php';
-    require 'Menu/AdminMenu.php';
+    require 'Menu/WebStudentRecordBookAdminMenu.php';
     new WebStudentRecordBookWidget(API::getApiInstance());
-    new AdminMenu();
+    new WebStudentRecordBookAdminMenu();
     new UserDataByStudController(API::getApiInstance()->getRepository());
     new SaveRecordBookController(API::getApiInstance()->getRepository());
 }
