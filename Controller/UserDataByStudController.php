@@ -1,7 +1,7 @@
 <?php
 
 
-namespace WebStudentRecordBook\Api;
+namespace WebStudentRecordBook\Controller;
 
 
 use StudentUtility\Repository\StudentMetaRepositoryInterface;

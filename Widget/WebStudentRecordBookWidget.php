@@ -6,6 +6,7 @@ namespace WebStudentRecordBook\Widget;
 
 use StudentUtility\API as APIStudentUtility;
 use WP_Widget;
+use const WebStudentRecordBook\LOCALE_DOMAIN;
 
 /**
  * Widget of Student record book
@@ -32,7 +33,7 @@ final class WebStudentRecordBookWidget extends WP_Widget
             'classname'   => __CLASS__,
             'description' => 'Просмотр оценок',
         ];
-        parent::__construct('WebStudentRecordBookWidget', 'Электронная зачетка', $widget_options);
+        parent::__construct('WebStudentRecordBookWidget', translate('Student record book', LOCALE_DOMAIN), $widget_options);
         add_action('widgets_init', [$this, 'registerWidget']);
         $this->apiStudentUtility = $apiStudentUtility;
     }

@@ -2,6 +2,8 @@
 
 namespace WebStudentRecordBook\Menu;
 
+use const WebStudentRecordBook\LOCALE_DOMAIN;
+
 /**
  * Class for initialize block into admin menu
  *
@@ -22,7 +24,12 @@ final class WebStudentRecordBookAdminMenu
      */
     public function init(): void
     {
-        add_menu_page('Электронная зачетка', 'Электронная зачетка', 'manage_options', 'student-record-book.php', [$this, 'render'], 'dashicons-book', 100);
+        add_menu_page(
+            translate('Student record book', LOCALE_DOMAIN),
+            translate('Student record book', LOCALE_DOMAIN),
+            'manage_options',
+            'student-record-book.php', [$this, 'render'], 'dashicons-book', 100
+        );
     }
 
     /**

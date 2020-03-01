@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
     <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
-    <?php include 'scriptJs.phtml' ?>
+    <?php use const WebStudentRecordBook\LOCALE_DOMAIN;
+
+    include 'scriptJs.phtml' ?>
 </head>
 <body>
 <div class="wrap">
@@ -27,34 +29,36 @@
         <div class="col-4">
             <form id="findStudent">
                 <div class="form-group">
-                    <label for="studentId">Номер студенческого билета</label>
+                    <label for="studentId">
+                        <?php esc_html_e('Student ID number', LOCALE_DOMAIN); ?>
+                    </label>
                     <input type="text" class="form-control" id="studentId">
                 </div>
-                <input type="submit" value="Найти" class="button button-primary">
+                <input type="submit" value="<?php esc_html_e('Search', LOCALE_DOMAIN); ?>" class="button button-primary">
             </form>
         </div>
     </div>
     <div class="row">
         <div class="offset-4"></div>
         <div class="col-6" style="visibility: hidden" id="controlBlock">
-            <button class="button button-success" id="saveButton">Сохранить</button>
-            <button class="button button-primary" id="createNewEducationYearButton">Создать новый учебный год</button>
-            <button class="button button-cancel" id="createDeleteEducationYearButton">Удалить учебный год</button>
+            <button class="button button-success" id="saveButton">
+                <?php esc_html_e('Save', LOCALE_DOMAIN); ?>
+            </button>
+            <button class="button button-primary" id="createNewEducationYearButton">
+                <?php esc_html_e('Create a new school year', LOCALE_DOMAIN); ?>
+            </button>
+            <button class="button button-cancel" id="createDeleteEducationYearButton">
+                <?php esc_html_e('Delete a school year', LOCALE_DOMAIN); ?>
+            </button>
         </div>
     </div>
     <div class="row">
         <div class="swiper-container col-10">
-            <!-- Additional required wrapper -->
             <div class="swiper-wrapper" id="swiper-container-slider">
             </div>
-            <!-- If we need pagination -->
             <div class="swiper-pagination"></div>
-
-            <!-- If we need navigation buttons -->
             <div class="swiper-button-prev"></div>
             <div class="swiper-button-next"></div>
-
-            <!-- If we need scrollbar -->
             <div class="swiper-scrollbar"></div>
         </div>
     </div>
@@ -66,10 +70,6 @@
         .swiper-slide {
             margin-top: 30px;
             height: auto;
-        }
-
-        .name-semester {
-            margin-left: 45%;
         }
 
         .swiper-button-prev {
