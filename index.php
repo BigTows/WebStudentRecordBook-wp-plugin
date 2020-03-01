@@ -7,6 +7,7 @@ Author: Alexander @BigTows Chapchuk
 Version: 1.0
 Author URI: bigtows.org
 License: MIT
+Requires PHP: 7.3
 */
 
 namespace WebStudentRecordBook;
@@ -19,7 +20,28 @@ use WebStudentRecordBook\Widget\WebStudentRecordBookWidget;
 
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
-if (is_plugin_active('StudentUtility-wp-plugin/index.php')) {
+/**
+ * Check status of plugin
+ *
+ * @param string $name plugin name
+ *
+ * @return bool if true then plugin is active else false
+ */
+function isPluginActive(string $name): bool
+{
+    if (empty($name)) {
+        return false;
+    }
+
+    foreach (get_plugins() as $key => $pluginMeta) {
+        if (isset($pluginMeta['Name']) && $pluginMeta['Name'] === $name) {
+            return is_plugin_active($key);
+        }
+    }
+    return false;
+}
+
+if (isPluginActive('Student Utility')) {
     require 'Api/UserDataByStudController.php';
     require 'Api/SaveRecordBookController.php';
     require 'Widget/WebStudentRecordBookWidget.php';
