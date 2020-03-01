@@ -1,7 +1,9 @@
 # Web Student Record Book
 Plugin for view/edit student record book.
-# Dependency
-For working need install another plugin: [Student Utility](https://github.com/BigTows/StudentUtility-wp-plugin)
+
+# Requirements
+  * For working need install another plugin: [Student Utility](https://github.com/BigTows/StudentUtility-wp-plugin)
+  * PHP version: 7.3 or higher
 
 
 # Coding style
