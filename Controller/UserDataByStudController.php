@@ -9,26 +9,45 @@ use WP_REST_Controller;
 use WP_REST_Response;
 use WP_REST_Server;
 
-class UserDataByStudController extends WP_REST_Controller
+/**
+ * Controller for getting student information about student by student ID
+ *
+ * @package WebStudentRecordBook\Controller
+ */
+final class UserDataByStudController extends WP_REST_Controller
 {
+    /**
+     * Repository of student meta
+     *
+     * @var StudentMetaRepositoryInterface
+     */
     private $studentMetaRepository;
 
+    /**
+     * UserDataByStudController constructor.
+     *
+     * @param StudentMetaRepositoryInterface $studentMetaRepository
+     */
     public function __construct(StudentMetaRepositoryInterface $studentMetaRepository)
     {
         $this->studentMetaRepository = $studentMetaRepository;
         add_action('rest_api_init', [$this, 'rest']);
     }
 
-    public function rest()
+    /**
+     * Init rest endpoint
+     */
+    public function rest(): void
     {
-        // Register route.
         register_rest_route('WebStudentRecordBook', '/getStudentDataByStudentId', [
             'methods'  => WP_REST_Server::READABLE,
             'callback' => [$this, 'get_items'],
         ]);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     public function get_items($data)
     {
         $studentId = $_GET['studentId'];
@@ -56,10 +75,16 @@ class UserDataByStudController extends WP_REST_Controller
         return $this->createResponse($responseData);
     }
 
+    /**
+     * Create response by data
+     *
+     * @param $data
+     *
+     * @return WP_REST_Response
+     */
     private function createResponse($data): WP_REST_Response
     {
         $response = new WP_REST_Response($data, 200);
-        // Set headers.
         $response->set_headers(['Cache-Control' => 'must-revalidate, no-cache, no-store, private']);
         return $response;
     }
