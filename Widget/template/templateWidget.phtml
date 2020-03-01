@@ -4,50 +4,214 @@
     <?php
     /** @var \StudentUtility\Repository\Meta\StudentRecordBook $recordBook */
     $recordBook = $data['recordBook'];
-    /** @var \StudentUtility\Repository\Meta\RecordBook\AcademicYear $year */
-    $year = current($recordBook->getAcademicYear());
     ?>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
 </head>
 <body>
 <div id="app">
-    <table>
-        <caption>Номер года <?php echo $year->getPeriod() ?></caption>
-        <tr>
-            <th>Дисциплина</th>
-            <th>Тип</th>
-            <th>Часов</th>
-            <th>Результат</th>
-            <th>Дата</th>
-            <th>Преподователь</th>
-        </tr>
+    <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
 
-        <?php
-        $year->getPeriod();
-        /** @var \StudentUtility\Repository\Meta\RecordBook\Semester $semester */
-        $semester = current($year->getSemesterList());
-        foreach ($semester->getDisciplineList() as $subject) {
-            ?>
 
-            <tr>
-                <td><?php echo $subject->getName() ?></td>
-                <td><?php echo $subject->getTypeExam() ?></td>
-                <td><?php echo $subject->getHoursPerYear() ?></td>
-                <td><?php echo $subject->getRating() ?></td>
-                <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
-                <td><?php echo $subject->getTeacher() ?></td>
-            </tr>
+    <div class="swiper-container col-10">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper" id="swiper-container-slider">
+            <?php foreach ($recordBook->getAcademicYear() as $academicYear) {
 
-            <?php
+                foreach ($academicYear->getSemesterList() as $semester) {
+                    ?>
+                    <div class='swiper-slide mobileTable'>
+                        <table class="gradetable" cellspacing="0" cellpadding="1" border="1">
+                            <caption>Номер года <?php echo $academicYear->getPeriod() ?>
+                                Семестр <?php echo $semester->getNumber() ?></caption>
+                            <tr>
+                                <th>Дисциплина</th>
+                                <th>Тип</th>
+                                <th>Часов</th>
+                                <th>Результат</th>
+                                <th>Дата</th>
+                                <th>Преподователь</th>
+                            </tr>
 
-        }
-        ?>
-    </table>
+                            <?php
+                            $academicYear->getPeriod();
+
+                            if (count($semester->getDisciplineList()) === 0) {
+                                ?>
+                                <tr>
+                                    <td colspan="6" style="text-align: center">Пока нет данных :(</td>
+                                </tr>
+                                <?php
+                            } else {
+
+                                foreach ($semester->getDisciplineList() as $subject) {
+                                    ?>
+
+                                    <tr>
+                                        <td><?php echo $subject->getName() ?></td>
+                                        <td><?php echo $subject->getTypeExam() ?></td>
+                                        <td><?php echo $subject->getHoursPerYear() ?></td>
+                                        <td><?php echo $subject->getRating() ?></td>
+                                        <td><?php echo $subject->getResultDate() === null ? '' : $subject->getResultDate()->format('d-m-Y') ?></td>
+                                        <td><?php echo $subject->getTeacher() ?></td>
+                                    </tr>
+
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </table>
+                    </div>
+                    <?php
+                }
+            } ?>
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+
+        <!-- If we need scrollbar -->
+        <div class="swiper-scrollbar"></div>
+    </div>
 </div>
+<script>
+    mySwiper = new Swiper('.swiper-container', {
+        loop: false,
+        allowTouchMove: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+            dynamicBullets: true
+        },
+        keyboard: {
+            enabled: true
+        },
+        /* navigation: {
+             nextEl: '.swiper-button-next',
+             prevEl: '.swiper-button-prev',
+         },*/
+
+        // And if we need scrollbar
+        scrollbar: {
+            el: '.swiper-scrollbar',
+        },
+    });
+</script>
+<style type="text/css">
+    .swiper-slide {
+        height: auto;
+    }
+
+    .swiper-pagination {
+        margin-top: 30px;
+    }
+
+    /* Стили для табицы */
+    .gradetable {
+        font-size: 12px;
+        font-family: 'Ubuntu Condensed', sans-serif;
+        /*color:#9d999d;*/
+        color: #333333;
+        width: 100%;
+        border-width: 1px;
+        border-color: #729ea5;
+        border-collapse: collapse;
+    }
+
+    .gradetable th {
+        font-size: 12px;
+        background: #ff8833; /*d7ecef*/
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #729ea5;
+    }
+
+    .gradetable caption {
+        font-size: 12px;
+        background: #ff8833; /*d7ecef*/
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #729ea5;
+    }
+
+    .gradetable tr {
+        background: #ffffff;
+    }
+
+    .gradetable td {
+        font-size: 12px;
+        border-width: 1px;
+        padding: 8px;
+        border-style: solid;
+        border-color: #729ea5;
+    }
+
+    .mobileTable {
+        overflow: auto;
+        width: 100%
+    }
+
+    .widget WebStudentRecordBook\Widget\WebStudentRecordBookWidget amr_widget {
+        overflow: auto;
+        width: 100%
+    }
+
+    .gradetable td:nth-of-type(1) {
+        text-align: left
+    }
+
+    .gradetable th, .gradetable td {
+        text-align: center
+    }
+
+    .gradetable tr:hover {
+        background: #ffc499;
+    }
+
+
+    /*!* Стили для меню *!*/
+    /*.menu-main {*/
+    /*    list-style: none;*/
+    /*    margin: 40px 0 5px;*/
+    /*    padding: 25px 0 5px;*/
+    /*    text-align: center;*/
+    /*    background: #f0f8ff;*/
+    /*}*/
+    /*.menu-main li {display: inline-block;}*/
+    /*.menu-main li:after {*/
+    /*    content: "|";*/
+    /*    color: #606060;*/
+    /*    display: inline-block;*/
+    /*    vertical-align:top;*/
+    /*}*/
+    /*.menu-main li:last-child:after {content: none; }*/
+    /*.menu-main a {*/
+    /*    text-decoration: none;*/
+    /*    font-family: 'Ubuntu Condensed', sans-serif;*/
+
+    /*    letter-spacing: 2px;*/
+    /*    position: relative;*/
+    /*    padding-bottom: 20px;*/
+    /*    margin: 0 34px 0 30px;*/
+    /*    font-size: 17px;*/
+    /*    text-transform: uppercase;*/
+    /*    display: inline-block;*/
+    /*    transition: color .2s;*/
+    /*}*/
+    /*.menu-main a, .menu-main a:visited {color: #333333;}*/
+    /*.menu-main a.current, .menu-main a:hover{color: #ff8833;}*/
+
+    body {
+        background: #f0f8ff;
+    }
+
+
+</style>
 </body>
 </html>
 

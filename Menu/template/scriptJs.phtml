@@ -1,0 +1,302 @@
+<!--jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--appendGrid JS library-->
+<script src="https://cdn.jsdelivr.net/npm/jquery.appendgrid@2.0.2/dist/AppendGrid.js"></script>
+<!--Script for initialize appendGrid-->
+<script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+<script>
+    let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
+    let mySwiper = undefined;
+    let datas = {};
+    const columns = [
+        {
+            name: "name",
+            display: "Дисциплина"
+        },
+        {
+            name: "type",
+            display: "Тип",
+            type: "select",
+            ctrlOptions: [
+                "Зачет с оценкой",
+                "Зачет",
+                "Экзамен",
+            ]
+        },
+        {
+            name: "hoursPerYear",
+            display: "Часов",
+            type: "number",
+            ctrlAttr: {
+                min: 2,
+                max: 10000
+            }
+        },
+        {
+            name: "rating",
+            display: "Результат",
+            type: "select",
+            ctrlOptions: [
+                "",
+                "Зачет",
+                "Удовлетворительно",
+                "Хорошо",
+                "Отлично",
+            ]
+        },
+        {
+            name: "resultDate",
+            display: "Дата сдачи",
+            type: "date",
+            ctrlAttr: {
+                maxlength: 10
+            }
+        },
+        {
+            name: "teacher",
+            display: "Преподаватель"
+        }
+    ];
+
+    var lastData = null;
+</script>
+
+<script>
+    (function ($) {
+        $(document).ready(function () {
+            $("#findStudent").submit(function (event) {
+                event.preventDefault();
+                let studentId = $("input").first().val();
+                $.ajax({
+                    type: 'GET',
+                    url: '/wp-json/WebStudentRecordBook/getStudentDataByStudentId/',
+                    data: {
+                        'studentId': studentId
+                    },
+                    dataType: 'json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                    }
+                }).done(function (response) {
+                    if (response.Code === 0) {
+                        init(response);
+                    } else {
+                        $.notify(`${response.Message}`, {
+                            globalPosition: 'bottom right'
+                        });
+                    }
+                });
+            });
+            $("#saveButton").click(function () {
+                let recordBook = lastData.recordBook;
+                for (let key in recordBook.academicYearList) {
+                    let year = recordBook.academicYearList[key];
+                    for (let keySemester in year.semesterList) {
+                        let semester = year.semesterList[keySemester];
+                        semester.disciplineList = datas[year.period][semester.number].getAllValue();
+                    }
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: '/wp-json/WebStudentRecordBook/save/',
+                    data: {
+                        'studentId': lastData.studentId,
+                        'recordBook': lastData.recordBook
+                    },
+                    dataType: 'json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                    }
+                }).done(function (response) {
+                    console.log(response);
+                    if (response.Code === 0) {
+                        $.notify(`Сохранено успешно!`, {
+                            globalPosition: 'bottom right',
+                            className: 'success'
+                        });
+                    } else {
+                        $.notify(`Ошибка сохранения: ${response.Message}`, {
+                            globalPosition: 'bottom right'
+                        });
+                    }
+                });
+            });
+            $("#createNewEducationYearButton").click(function () {
+                var data = parseInt(prompt('Введите начальный учебный год (2020)'));
+                if (isNaN(data)) {
+                    return;
+                }
+                var recordBook = lastData.recordBook;
+                if (recordBook.academicYearList === undefined) {
+                    recordBook.academicYearList = [];
+                }
+
+                let period = data + "/" + (data + 1);
+
+                if (existsAcademicYear(recordBook.academicYearList, period)) {
+                    alert('Такой учебный год уже существует!');
+                    return;
+                }
+
+                recordBook.academicYearList[recordBook.academicYearList.length] = {
+                    period: period,
+                    semesterList: [
+                        {
+                            number: 1,
+                            disciplineList: []
+                        },
+                        {
+                            number: 2,
+                            disciplineList: []
+                        }
+                    ]
+                };
+
+                recordBook.academicYearList.sort(function (first, second) {
+                    if (first.period < second.period) {
+                        return -1;
+                    }
+                    if (first.period > second.period) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                init(lastData);
+            });
+
+            function existsAcademicYear(list, find) {
+                for (let key in list) {
+                    let academicYear = list[key];
+                    if (academicYear.period === find) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            $("#createDeleteEducationYearButton").click(function () {
+                let data = prompt('Введите учебный год, для удаления (2020/2021)');
+                let recordBook = lastData.recordBook;
+
+                for (let key in recordBook.academicYearList) {
+                    let academicYear = recordBook.academicYearList[key];
+                    if (academicYear.period === data) {
+                        recordBook.academicYearList.splice(key, 1);
+                        break;
+                    }
+                }
+                recordBook.academicYearList.sort(function (first, second) {
+                    if (first.period < second.period) {
+                        return -1;
+                    }
+                    if (first.period > second.period) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                init(lastData);
+            });
+
+
+            function init(data) {
+                updateDataCache(data);
+                initDataAboutStudent(data);
+                var recordBook = data.recordBook;
+                let swiperContainer = document.getElementById("swiper-container-slider");
+                swiperContainer.innerHTML = "";
+                for (let key in recordBook.academicYearList) {
+                    let year = recordBook.academicYearList[key];
+                    for (let keySemester in year.semesterList) {
+                        let semester = year.semesterList[keySemester];
+                        let idTable = year.period + semester.number;
+                        swiperContainer.innerHTML += generateTemplateSlide(year.period, semester.number, idTable);
+
+                        (function ($) {
+                            setTimeout(function () {
+                                if (datas[year.period] === undefined) {
+                                    datas[year.period] = {};
+                                }
+                                datas[year.period][semester.number] = new AppendGrid({
+                                    element: idTable,
+                                    uiFramework: "bootstrap4",
+                                    iconFramework: "fontawesome5",
+                                    columns: columns,
+                                    sectionClasses: {
+                                        table: "table-sm",
+                                        control: "form-control-sm",
+                                        buttonGroup: "btn-group-sm"
+                                    },
+                                    i18n: {
+                                        rowEmpty: "Семестр пуст"
+                                    }
+                                });
+                                if (semester.disciplineList.length === 0) {
+                                    datas[year.period][semester.number].load([{}]);
+                                    datas[year.period][semester.number].removeRow();
+                                } else {
+                                    datas[year.period][semester.number].load(semester.disciplineList);
+                                }
+
+                            }, 200);
+                        })(jQuery);
+
+
+                    }
+                }
+                initSwiper();
+            }
+
+            function updateDataCache(data) {
+                lastData = data;
+                let controlBlock = document.getElementById('controlBlock');
+                if (lastData !== null && lastData !== undefined) {
+                    controlBlock.style.visibility = 'visible';
+                } else {
+                    controlBlock.style.visibility = 'hidden';
+                }
+            }
+
+            /**
+             * Generate template for slide
+             * @param {string} period
+             * @param {int} semesterNumber
+             * @param {string} idTable id for table
+             * @returns {string}
+             */
+            function generateTemplateSlide(period, semesterNumber, idTable) {
+                return `<div class='swiper-slide'><div class='name-semester'>${period} Семестр: ${semesterNumber}</div> <table id='${idTable}'></table></div>`
+            }
+
+            function initDataAboutStudent(data) {
+                let studentBlockInfo = document.getElementById('studentInfoBlock');
+                studentBlockInfo.style.visibility = 'visible';
+                document.getElementById('studentFirstName').innerText = 'Имя: ' + data.firstName;
+                document.getElementById('studentLastName').innerText = 'Фамилия: ' + data.secondName;
+                document.getElementById('studentId').innerText = 'Номер зачетки: ' + data.studentId;
+            }
+
+            function initSwiper() {
+                if (mySwiper !== undefined) {
+                    mySwiper.update();
+                    return;
+                }
+                mySwiper = new Swiper('.swiper-container', {
+                    loop: false,
+                    allowTouchMove: false,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    scrollbar: {
+                        el: '.swiper-scrollbar',
+                    },
+                });
+            }
+
+        });
+    })(jQuery);
+
+</script>
+

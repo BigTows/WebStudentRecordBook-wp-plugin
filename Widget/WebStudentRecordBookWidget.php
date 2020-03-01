@@ -4,14 +4,15 @@
 namespace WebStudentRecordBook\Widget;
 
 
-use DateTime;
 use StudentUtility\API as APIStudentUtility;
-use StudentUtility\Repository\Meta\RecordBook\AcademicYear;
-use StudentUtility\Repository\Meta\RecordBook\Discipline;
-use StudentUtility\Repository\Meta\RecordBook\Semester;
-use StudentUtility\Repository\Meta\StudentRecordBook;
 use WP_Widget;
+use const WebStudentRecordBook\LOCALE_DOMAIN;
 
+/**
+ * Widget of Student record book
+ *
+ * @package WebStudentRecordBook\Widget
+ */
 final class WebStudentRecordBookWidget extends WP_Widget
 {
     /**
@@ -32,25 +33,22 @@ final class WebStudentRecordBookWidget extends WP_Widget
             'classname'   => __CLASS__,
             'description' => 'Просмотр оценок',
         ];
-        parent::__construct('WebStudentRecordBookWidget', 'Электронная зачетка', $widget_options);
+        parent::__construct('WebStudentRecordBookWidget', translate('Student record book', LOCALE_DOMAIN), $widget_options);
         add_action('widgets_init', [$this, 'registerWidget']);
         $this->apiStudentUtility = $apiStudentUtility;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function form($instance)
     {
-        $title = @ $instance['title'] ?: 'Заголовок по умолчанию';
-
-        ?>
-        <p>
-            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-            <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
-                   name="<?php echo $this->get_field_name('title'); ?>" type="text"
-                   value="<?php echo esc_attr($title); ?>">
-        </p>
-        <?php
+        include 'template/settingsWidget.phtml';
     }
 
+    /**
+     * Register widget into WordPress
+     */
     public function registerWidget(): void
     {
         register_widget($this);
@@ -64,32 +62,15 @@ final class WebStudentRecordBookWidget extends WP_Widget
     {
         echo $args['before_widget'] . $args['before_title'] . $args['after_title'];
         $studentMeta = $this->apiStudentUtility->getRepository()->getByUserId(get_current_user_id());
-        $studentMeta->setStudentRecordBook(new StudentRecordBook([
-            new AcademicYear('2019/2020', [
-                new Semester(1, [
-                    (new Discipline('Kazach', 'Экзамен', 200))
-                        ->setTeacher('Азаркин')
-                        ->setRating(2)
-                        ->setResultDate(new DateTime())
-                    ,
-                    new Discipline('Математика', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                ]),
-                new Semester(2, [
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                    new Discipline('Kazach', 'Экзамен', 200),
-                ])
-            ])
-        ]));
-        $this->apiStudentUtility->getRepository()->save($studentMeta);
-        $data = [
-            'numberOfStudentCard' => $studentMeta->getNumberOfStudentCard(),
-            'recordBook'          => $studentMeta->getStudentRecordBook()
-        ];
-        include 'template/templateWidget.phtml';
+        if ($studentMeta->getNumberOfStudentCard() !== null && $studentMeta->getStudentRecordBook() !== null) {
+            $data = [
+                'numberOfStudentCard' => $studentMeta->getNumberOfStudentCard(),
+                'recordBook'          => $studentMeta->getStudentRecordBook()
+            ];
+            include 'template/templateWidget.phtml';
+        } else {
+            include 'template/notValidStundetTemplateWidget.phtml';
+        }
 
 
         echo $args['after_widget'];

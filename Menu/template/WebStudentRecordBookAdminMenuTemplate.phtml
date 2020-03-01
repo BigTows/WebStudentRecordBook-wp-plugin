@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
+    <?php use const WebStudentRecordBook\LOCALE_DOMAIN;
+
+    include 'scriptJs.phtml' ?>
+</head>
+<body>
+<div class="wrap">
+    <h2><?php echo get_admin_page_title(); ?></h2>
+    <hr>
+    <div class="row">
+        <div class="col-2" id="studentInfoBlock" style="visibility: hidden">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item" id="studentFirstName"></li>
+                <li class="list-group-item" id="studentLastName"></li>
+               <!-- <li class="list-group-item" id="studentSecondName"></li>-->
+                <li class="list-group-item" id="studentId"></li>
+                <li class="list-group-item"></li>
+            </ul>
+        </div>
+        <div class="offset-6"></div>
+        <div class="col-4">
+            <form id="findStudent">
+                <div class="form-group">
+                    <label for="studentId">
+                        <?php esc_html_e('Student ID number', LOCALE_DOMAIN); ?>
+                    </label>
+                    <input type="text" class="form-control" id="studentId">
+                </div>
+                <input type="submit" value="<?php esc_html_e('Search', LOCALE_DOMAIN); ?>" class="button button-primary">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset-4"></div>
+        <div class="col-6" style="visibility: hidden" id="controlBlock">
+            <button class="button button-success" id="saveButton">
+                <?php esc_html_e('Save', LOCALE_DOMAIN); ?>
+            </button>
+            <button class="button button-primary" id="createNewEducationYearButton">
+                <?php esc_html_e('Create a new school year', LOCALE_DOMAIN); ?>
+            </button>
+            <button class="button button-cancel" id="createDeleteEducationYearButton">
+                <?php esc_html_e('Delete a school year', LOCALE_DOMAIN); ?>
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="swiper-container col-10">
+            <div class="swiper-wrapper" id="swiper-container-slider">
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-scrollbar"></div>
+        </div>
+    </div>
+    <style>
+        .swiper-container {
+            margin-top: 20px;
+        }
+
+        .swiper-slide {
+            margin-top: 30px;
+            height: auto;
+        }
+
+        .swiper-button-prev {
+            top: 25px;
+        }
+
+        .swiper-button-next {
+            top: 25px;
+        }
+    </style>
+</div>
+</body>
+</html>
