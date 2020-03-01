@@ -4,7 +4,7 @@ Plugin Name: Web Student Record Book
 Plugin URI: https://github.com/BigTows/WebStudentRecordBook-wp-plugin
 Description: Plugin for view/edit student record book.
 Author: Alexander @BigTows Chapchuk
-Version: 1.0
+Version: 1.1
 Author URI: bigtows.org
 License: MIT
 Requires PHP: 7.3
