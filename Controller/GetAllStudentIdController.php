@@ -60,7 +60,6 @@ final class GetAllStudentIdController extends WP_REST_Controller
             $response = $this->createResponse(0, '', $this->studentMetaRepository->getAllStudentId());
         }
 
-
         return $response;
     }
 
@@ -78,9 +77,9 @@ final class GetAllStudentIdController extends WP_REST_Controller
     {
         $response = new WP_REST_Response(
             [
-                'Code'    => $code,
-                'Message' => $message,
-                'Data'    => $data
+                'code'    => $code,
+                'message' => $message,
+                'data'    => $data
             ], 200
         );
         $response->set_headers(['Cache-Control' => 'must-revalidate, no-cache, no-store, private']);
