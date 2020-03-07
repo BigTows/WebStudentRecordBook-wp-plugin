@@ -71,8 +71,9 @@
                 let studentId = $("input").first().val();
                 $.ajax({
                     type: 'GET',
-                    url: '/wp-json/WebStudentRecordBook/getStudentDataByStudentId/',
+                    url: '/',
                     data: {
+                        'rest_route': '/WebStudentRecordBook/getStudentDataByStudentId',
                         'studentId': studentId
                     },
                     dataType: 'json',
@@ -100,8 +101,9 @@
                 }
                 $.ajax({
                     type: 'GET',
-                    url: '/wp-json/WebStudentRecordBook/save/',
+                    url: '/',
                     data: {
+                        'rest_route':'/WebStudentRecordBook/save',
                         'studentId': lastData.studentId,
                         'recordBook': lastData.recordBook
                     },
