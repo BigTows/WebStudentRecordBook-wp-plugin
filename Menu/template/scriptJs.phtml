@@ -242,9 +242,16 @@
             }
 
             function init(data) {
+                console.debug('Load student data: ' + JSON.stringify(data));
+                let recordBook = data.recordBook;
+                if (recordBook.length === 0) {
+                    data.recordBook.academicYearList = [];
+                    data.recordBook = {};
+                    data.recordBook.academicYearList = [];
+                    console.debug('Load student data: ' + JSON.stringify(data));
+                }
                 updateDataCache(data);
                 initDataAboutStudent(data);
-                var recordBook = data.recordBook;
                 let swiperContainer = document.getElementById("swiper-container-slider");
                 swiperContainer.innerHTML = "";
                 for (let key in recordBook.academicYearList) {
@@ -290,6 +297,7 @@
             }
 
             function updateDataCache(data) {
+                console.debug('Last data: '+JSON.stringify(data));
                 lastData = data;
                 let controlBlock = document.getElementById('controlBlock');
                 if (lastData !== null && lastData !== undefined) {
