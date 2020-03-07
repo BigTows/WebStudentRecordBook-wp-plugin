@@ -4,7 +4,7 @@ Plugin Name: Web Student Record Book
 Plugin URI: https://github.com/BigTows/WebStudentRecordBook-wp-plugin
 Description: Plugin for view/edit student record book.
 Author: Alexander @BigTows Chapchuk
-Version: 1.1
+Version: 1.2
 Author URI: bigtows.org
 License: MIT
 Requires PHP: 7.3
@@ -13,6 +13,7 @@ Requires PHP: 7.3
 namespace WebStudentRecordBook;
 
 use StudentUtility\API;
+use WebStudentRecordBook\Controller\GetAllStudentIdController;
 use WebStudentRecordBook\Controller\SaveRecordBookController;
 use WebStudentRecordBook\Controller\UserDataByStudController;
 use WebStudentRecordBook\Menu\WebStudentRecordBookAdminMenu;
@@ -33,18 +34,19 @@ function isPluginActive(string $name): bool
     if (empty($name)) {
         return false;
     }
-
     foreach (get_plugins() as $key => $pluginMeta) {
         if (isset($pluginMeta['Name']) && $pluginMeta['Name'] === $name) {
             return is_plugin_active($key);
         }
     }
+
     return false;
 }
 
 if (isPluginActive('Student Utility')) {
     require 'Controller/UserDataByStudController.php';
     require 'Controller/SaveRecordBookController.php';
+    require 'Controller/GetAllStudentIdController.php';
     require 'Widget/WebStudentRecordBookWidget.php';
     require 'Menu/WebStudentRecordBookAdminMenu.php';
     load_plugin_textdomain(LOCALE_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/language');
@@ -52,4 +54,5 @@ if (isPluginActive('Student Utility')) {
     new WebStudentRecordBookAdminMenu();
     new UserDataByStudController(API::getApiInstance()->getRepository());
     new SaveRecordBookController(API::getApiInstance()->getRepository());
+    new GetAllStudentIdController(API::getApiInstance()->getRepository());
 }

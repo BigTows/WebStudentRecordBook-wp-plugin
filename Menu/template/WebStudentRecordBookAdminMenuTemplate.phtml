@@ -22,22 +22,23 @@
             <ul class="list-group list-group-flush">
                 <li class="list-group-item" id="studentFirstName"></li>
                 <li class="list-group-item" id="studentLastName"></li>
-               <!-- <li class="list-group-item" id="studentSecondName"></li>-->
+                <!-- <li class="list-group-item" id="studentSecondName"></li>-->
                 <li class="list-group-item" id="studentId"></li>
                 <li class="list-group-item"></li>
             </ul>
         </div>
         <div class="offset-6"></div>
         <div class="col-4">
-            <form id="findStudent">
-                <div class="form-group">
-                    <label for="studentId">
-                        <?php esc_html_e('Student ID number', LOCALE_DOMAIN); ?>
-                    </label>
-                    <input type="text" class="form-control" id="studentId">
-                </div>
-                <input type="submit" value="<?php esc_html_e('Search', LOCALE_DOMAIN); ?>" class="button button-primary">
-            </form>
+            <div id="users" class="student-ids">
+                <form>
+                    <div class="form-group">
+                        <label for="studentIdSearch"><?php esc_html_e('Student ID number', LOCALE_DOMAIN); ?></label>
+                        <input type="text" id="studentIdSearch" class="form-control search"
+                               placeholder=""/>
+                    </div>
+                </form>
+                <ul class="list list-group"></ul>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -65,13 +66,23 @@
         </div>
     </div>
     <style>
+        #controlBlock {
+            margin-top: 20px;
+        }
+
+        .student-ids {
+            max-height: 200px;
+            overflow-y: scroll;
+        }
+
         .swiper-container {
             margin-top: 20px;
         }
 
-        .name-semester{
+        .name-semester {
             text-align: center;
         }
+
         .swiper-slide {
             margin-top: 30px;
             height: auto;

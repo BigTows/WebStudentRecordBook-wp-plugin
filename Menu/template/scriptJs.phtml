@@ -6,6 +6,7 @@
 <!--Script for initialize appendGrid-->
 <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
 <script>
     let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
     let mySwiper = undefined;
@@ -64,31 +65,29 @@
 </script>
 
 <script>
+    let userList = null;
     (function ($) {
         $(document).ready(function () {
-            $("#findStudent").submit(function (event) {
-                event.preventDefault();
-                let studentId = $("input").first().val();
-                $.ajax({
-                    type: 'GET',
-                    url: '/wp-json/WebStudentRecordBook/getStudentDataByStudentId/',
-                    data: {
-                        'studentId': studentId
-                    },
-                    dataType: 'json',
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader('X-WP-Nonce', _nonce);
-                    }
-                }).done(function (response) {
-                    if (response.Code === 0) {
-                        init(response);
-                    } else {
-                        $.notify(`${response.Message}`, {
-                            globalPosition: 'bottom right'
-                        });
-                    }
-                });
+            $.ajax({
+                type: 'GET',
+                url: '/',
+                data: {
+                    'rest_route': '/WebStudentRecordBook/getAllStudentId'
+                },
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                }
+            }).done(function (response) {
+                if (response.code === 0) {
+                    initStudentList(response);
+                } else {
+                    $.notify(`${response.message}`, {
+                        globalPosition: 'bottom right'
+                    });
+                }
             });
+
             $("#saveButton").click(function () {
                 let recordBook = lastData.recordBook;
                 for (let key in recordBook.academicYearList) {
@@ -100,8 +99,9 @@
                 }
                 $.ajax({
                     type: 'GET',
-                    url: '/wp-json/WebStudentRecordBook/save/',
+                    url: '/',
                     data: {
+                        'rest_route': '/WebStudentRecordBook/save',
                         'studentId': lastData.studentId,
                         'recordBook': lastData.recordBook
                     },
@@ -200,10 +200,58 @@
             });
 
 
+            function initStudentList(data) {
+                var options = {
+                    valueNames: ['studentId'],
+                    // Since there are no elements in the list, this will be used as template.
+                    item: `<li class="list-group-item list-group-item-action studentId"><span class="studentId"> </span></li>`
+                };
+                let values = [];
+                for (let value of data.data) {
+                    values[values.length] = {
+                        studentId: value
+                    }
+                }
+
+                userList = new List('users', options, values);
+
+                $(".studentId").on('click', function (event) {
+                    event.preventDefault();
+                    let studentId = $(this).text();
+                    $.ajax({
+                        type: 'GET',
+                        url: '/',
+                        data: {
+                            'rest_route': '/WebStudentRecordBook/getStudentDataByStudentId',
+                            'studentId': studentId
+                        },
+                        dataType: 'json',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                        }
+                    }).done(function (response) {
+                        if (response.Code === 0) {
+                            init(response);
+                        } else {
+                            $.notify(`${response.Message}`, {
+                                globalPosition: 'bottom right'
+                            });
+                        }
+                    });
+                });
+            }
+
             function init(data) {
+                console.debug('Load student data: ' + JSON.stringify(data));
+                let recordBook = data.recordBook;
+                if (recordBook.length === 0) {
+                    data.recordBook.academicYearList = [];
+                    data.recordBook = {};
+                    data.recordBook.academicYearList = [];
+                    console.debug('Load student data: ' + JSON.stringify(data));
+                }
                 updateDataCache(data);
                 initDataAboutStudent(data);
-                var recordBook = data.recordBook;
                 let swiperContainer = document.getElementById("swiper-container-slider");
                 swiperContainer.innerHTML = "";
                 for (let key in recordBook.academicYearList) {
@@ -249,6 +297,7 @@
             }
 
             function updateDataCache(data) {
+                console.debug('Last data: '+JSON.stringify(data));
                 lastData = data;
                 let controlBlock = document.getElementById('controlBlock');
                 if (lastData !== null && lastData !== undefined) {
