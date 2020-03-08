@@ -67,8 +67,7 @@ final class ImportCSVDataController extends WP_REST_Controller
 
     private function parseCsv($csv): WP_REST_Response
     {
-        
-        return $this->createResponse(0, $csv);
+        return $this->createResponse(1, json_encode(str_getcsv($csv, ';'), JSON_THROW_ON_ERROR, 512));
     }
 
     /**
