@@ -9,13 +9,18 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
     <link rel="stylesheet" href="https://unpkg.com/swiper/css/swiper.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
     <?php use const WebStudentRecordBook\LOCALE_DOMAIN;
 
     include 'scriptJs.phtml' ?>
 </head>
 <body>
 <div class="wrap">
-    <h2><?php echo get_admin_page_title(); ?></h2>
+    <div class="wrap row">
+        <h2 class="col-4"><?php echo get_admin_page_title(); ?></h2>
+        <div class="offset-7"></div>
+        <button class="button col-1" id="importCSVButton">Инморт CSV</button>
+    </div>
     <hr>
     <div class="row">
         <div class="col-2" id="studentInfoBlock" style="visibility: hidden">
@@ -64,6 +69,17 @@
             <div class="swiper-button-next"></div>
             <div class="swiper-scrollbar"></div>
         </div>
+    </div>
+    <div id="dialog" title="Импорт через CSV">
+        <form id="importCSVForm">
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input type="file" name="csv" class="custom-file-input" id="csv">
+                    <label class="custom-file-label" for="csv" aria-describedby="inputGroupFileAddon02">Choose file</label>
+                </div>
+            </div>
+            <input type="submit" class="button-primary button" value="Отправить">
+        </form>
     </div>
     <style>
         #controlBlock {

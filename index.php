@@ -14,6 +14,7 @@ namespace WebStudentRecordBook;
 
 use StudentUtility\API;
 use WebStudentRecordBook\Controller\GetAllStudentIdController;
+use WebStudentRecordBook\Controller\ImportCSVDataController;
 use WebStudentRecordBook\Controller\SaveRecordBookController;
 use WebStudentRecordBook\Controller\UserDataByStudController;
 use WebStudentRecordBook\Menu\WebStudentRecordBookAdminMenu;
@@ -47,6 +48,7 @@ if (isPluginActive('Student Utility')) {
     require 'Controller/UserDataByStudController.php';
     require 'Controller/SaveRecordBookController.php';
     require 'Controller/GetAllStudentIdController.php';
+    require 'Controller/ImportCSVDataController.php';
     require 'Widget/WebStudentRecordBookWidget.php';
     require 'Menu/WebStudentRecordBookAdminMenu.php';
     load_plugin_textdomain(LOCALE_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/language');
@@ -55,4 +57,5 @@ if (isPluginActive('Student Utility')) {
     new UserDataByStudController(API::getApiInstance()->getRepository());
     new SaveRecordBookController(API::getApiInstance()->getRepository());
     new GetAllStudentIdController(API::getApiInstance()->getRepository());
+    new ImportCSVDataController(API::getApiInstance()->getRepository());
 }

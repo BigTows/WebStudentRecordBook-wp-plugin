@@ -7,6 +7,10 @@
 <script src="https://unpkg.com/swiper/js/swiper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+<script
+        src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+        integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+        crossorigin="anonymous"></script>
 <script>
     let _nonce = "<?php echo wp_create_nonce('wp_rest'); ?>";
     let mySwiper = undefined;
@@ -68,6 +72,20 @@
     let userList = null;
     (function ($) {
         $(document).ready(function () {
+            $("#dialog").dialog({
+                autoOpen: false,
+                modal: true,
+                resizable: true,
+                height: "auto",
+                width: 600,
+            });
+            $('#importCSVButton').click(function () {
+                $("#dialog").dialog("open");
+            });
+
+            /**
+             * Init students
+             */
             $.ajax({
                 type: 'GET',
                 url: '/',
@@ -87,6 +105,41 @@
                     });
                 }
             });
+
+            $('#importCSVForm').submit(function (event) {
+                event.preventDefault();
+                let reader = new FileReader();
+                reader.readAsText($(this).find('#csv').prop('files')[0]);
+                reader.onload = function () {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/',
+                        data: {
+                            rest_route: '/WebStudentRecordBook/importCsv',
+                            csv: reader.result,
+                        },
+                        dataType: 'json',
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', _nonce);
+                        }
+                    }).done(function (response) {
+                        if (response.code === 0) {
+                            $.notify(`Импорт завершился успешно!`, {
+                                globalPosition: 'bottom right',
+                                className: 'success'
+                            });
+                            setTimeout(function () {
+                                location.reload();
+                            }, 500);
+                        } else {
+                            $.notify(`Ошибка импорта: ${response.message}`, {
+                                globalPosition: 'bottom right'
+                            });
+                        }
+                    });
+                }
+            });
+
 
             $("#saveButton").click(function () {
                 let recordBook = lastData.recordBook;
@@ -297,7 +350,7 @@
             }
 
             function updateDataCache(data) {
-                console.debug('Last data: '+JSON.stringify(data));
+                console.debug('Last data: ' + JSON.stringify(data));
                 lastData = data;
                 let controlBlock = document.getElementById('controlBlock');
                 if (lastData !== null && lastData !== undefined) {

@@ -14,7 +14,7 @@ use WP_REST_Server;
  *
  * @package WebStudentRecordBook\Controller
  */
-final class GetAllStudentIdController extends WP_REST_Controller
+final class ImportCSVDataController extends WP_REST_Controller
 {
     /**
      * Repository of student meta
@@ -24,7 +24,7 @@ final class GetAllStudentIdController extends WP_REST_Controller
     private $studentMetaRepository;
 
     /**
-     * GetAllStudentIdController constructor.
+     * ImportCSVDataController constructor.
      *
      * @param StudentMetaRepositoryInterface $studentMetaRepository
      */
@@ -41,7 +41,7 @@ final class GetAllStudentIdController extends WP_REST_Controller
     {
         register_rest_route(
             'WebStudentRecordBook',
-            '/getAllStudentId',
+            '/importCsv',
             [
                 'methods'  => WP_REST_Server::READABLE,
                 'callback' => [$this, 'get_items'],
@@ -56,11 +56,19 @@ final class GetAllStudentIdController extends WP_REST_Controller
     {
         if (current_user_can('administrator') === false) {
             $response = $this->createResponse(1, 'Permission denied');
+        } elseif (empty($_GET['csv'])) {
+            $response = $this->createResponse(2, 'Invalid data');
         } else {
-            $response = $this->createResponse(0, '', $this->studentMetaRepository->getAllStudentId());
+            $response = $this->parseCsv($_GET['csv']);
         }
 
         return $response;
+    }
+
+    private function parseCsv($csv): WP_REST_Response
+    {
+        
+        return $this->createResponse(0, $csv);
     }
 
     /**
